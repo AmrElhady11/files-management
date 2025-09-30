@@ -1,1 +1,18 @@
-spring.application.name=files-management
+spring:
+  application:
+    name: files-management-app
+  main:
+    banner-mode: off
+  datasource:
+    url:
+    username:
+    password:
+      minio.url=http://localhost:9000
+      minio.access.name=yourAccessKey
+      minio.access.secret=yourSecretKey
+      minio.bucket.name=yourBucketName
+minio:
+  url: http://localhost:9000
+  access :
+      name: admin
+      secret: strongpassword123

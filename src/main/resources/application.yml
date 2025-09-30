@@ -7,9 +7,9 @@ spring:
     url:
     username:
     password:
-      
+
 minio:
   url: http://localhost:9000
   access :
       name: admin
-      secret: strongpassword123
+      secret: StrongPassword123

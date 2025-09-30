@@ -7,10 +7,7 @@ spring:
     url:
     username:
     password:
-      minio.url=http://localhost:9000
-      minio.access.name=yourAccessKey
-      minio.access.secret=yourSecretKey
-      minio.bucket.name=yourBucketName
+      
 minio:
   url: http://localhost:9000
   access :

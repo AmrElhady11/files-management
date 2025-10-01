@@ -3,18 +3,19 @@ package com.filesmanagement.service.impl;
 import com.filesmanagement.entity.Document;
 import com.filesmanagement.repository.DocumentRepository;
 import com.filesmanagement.service.DocumentService;
-import io.minio.BucketExistsArgs;
-import io.minio.MakeBucketArgs;
-import io.minio.MinioClient;
-import io.minio.PutObjectArgs;
+import io.minio.*;
 import io.minio.errors.MinioException;
+import io.minio.http.Method;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -32,8 +33,13 @@ public class DocumentServiceImpl implements DocumentService {
 
 
     @Override
-    public Document getDocument(int userId) {
-        return null;
+    public List<String> getDocumentUrl(int userId) {
+        List<Document> documents = documentRepository.findByUserId(userId);
+        List<String> documentUrls = new ArrayList<>();
+        documents.forEach(document -> {documentUrls.add(getDocumentUrlFromBucket(document.getBucketName(),document.getObjectKey()));}
+        );
+
+        return documentUrls;
     }
 
     private String getBucketName(String contentType){
@@ -87,4 +93,19 @@ public class DocumentServiceImpl implements DocumentService {
 
                 .build());
     }
+    private String getDocumentUrlFromBucket(String bucketName, String objectName) {
+        try {
+           return minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
+                   .bucket(bucketName)
+                   .object(objectName).expiry(60*60)
+                   .method(Method.GET)
+                   .build()
+           );
+        }
+        catch (Exception e) {
+            throw new RuntimeException("Error occurred: " + e.getMessage());
+        }
+    }
+
 }
+
